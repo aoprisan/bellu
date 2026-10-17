@@ -1,7 +1,9 @@
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 import { NOTES, RAW } from "./data/graves";
-import { initMap } from "./map";
+import { PLAN_H, PLAN_W, plotFor } from "./data/plots";
+import { BELLU, directionsUrl, gpsToPlan, heading, offset } from "./geo";
+import { gmapsLinks, initMap } from "./map";
 import type { Grave } from "./types";
 
 const fold = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -18,6 +20,8 @@ const q = $<HTMLInputElement>("q");
 const list = $<HTMLUListElement>("list");
 const count = $<HTMLParagraphElement>("count");
 const chips = $<HTMLDivElement>("chips");
+const locStatus = $<HTMLParagraphElement>("locstatus");
+$<HTMLAnchorElement>("getthere").href = directionsUrl();
 
 /** Wrap every occurrence of any search term in <mark>, matching diacritic-insensitively. */
 function highlight(text: string, terms: string[]): string {
@@ -56,11 +60,66 @@ function search(query: string): { hits: Grave[]; terms: string[] } {
   return { hits: graves.filter((g) => terms.every((t) => g.key.includes(t))), terms };
 }
 
-const map = initMap($("map"), graves, (fig) => {
-  q.value = fig;
-  render();
-  map.select(fig);
-});
+const map = initMap(
+  $("map"),
+  graves,
+  (fig) => {
+    q.value = fig;
+    render();
+    map.select(fig);
+  },
+  toggleLocate,
+);
+
+// "Locate me": project the GPS fix onto the plan. Only shown when it lands on (or just around) the plan.
+let watchId: number | null = null;
+let onSite = false;
+
+function stopLocate(msg = "") {
+  if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+  watchId = null;
+  map.setLocating(false);
+  map.setUser(null);
+  locStatus.textContent = msg;
+  if (onSite) {
+    onSite = false;
+    render();
+  }
+}
+
+function toggleLocate() {
+  if (watchId !== null) return stopLocate();
+  if (!("geolocation" in navigator)) return stopLocate("This browser can't share your location.");
+  map.setLocating(true);
+  locStatus.textContent = "Finding your location…";
+  watchId = navigator.geolocation.watchPosition(
+    ({ coords }) => {
+      const here = { lat: coords.latitude, lng: coords.longitude };
+      const [x, y] = gpsToPlan(here);
+      const margin = 150; // px, ~ 90 m around the plan
+      const wasOnSite = onSite;
+      onSite = x > -margin && x < PLAN_W + margin && y > -margin && y < PLAN_H + margin;
+      if (onSite) {
+        const [, yAcc] = gpsToPlan(offset(here, 0, coords.accuracy));
+        const [xAcc] = gpsToPlan(offset(here, coords.accuracy, 0));
+        const accPx = Math.max(Math.abs(xAcc - x), Math.abs(yAcc - y), 8);
+        map.setUser({ xy: [x, y], accPx });
+        locStatus.textContent = `You are on the plan (±${Math.round(coords.accuracy)} m GPS, plot positions ±25 m). Tap a result for the distance to it.`;
+      } else {
+        map.setUser(null);
+        const { m } = heading(here, BELLU);
+        locStatus.innerHTML = `You're about ${m < 10_000 ? (m / 1000).toFixed(1) : Math.round(m / 1000)} km from Bellu. <a href="${esc(directionsUrl())}" target="_blank" rel="noopener">Directions to the cemetery</a>`;
+      }
+      if (onSite !== wasOnSite) render();
+    },
+    (err) => {
+      if (err.code === err.PERMISSION_DENIED) return stopLocate("Location permission was denied.");
+      // Timeouts / no fix are often transient (indoors, between fixes): keep watching.
+      if (!onSite) locStatus.textContent = "Still looking for a GPS fix; try again outdoors.";
+    },
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 30_000 },
+  );
+}
 
 let selectedFig: string | null = null;
 
@@ -76,11 +135,13 @@ function render() {
       .map((g) => {
         const placed = map.has(g.fig);
         const note = NOTES[g.name];
+        const pos = plotFor(g.fig);
         return `<li class="${g.fig === selectedFig ? "sel" : ""}">
   <button type="button" class="fig" data-fig="${esc(g.fig)}" ${placed ? "" : "disabled title=\"Not marked on the plan\""}>Fig. ${esc(g.fig)}</button>
   <div class="name">${highlight(g.name, terms)}
     <div class="meta">${esc(g.yrs)}${g.yrs && g.role ? " · " : ""}${highlight(g.role, terms)}</div>
     ${note ? `<div class="note">${esc(note)}</div>` : ""}
+    ${pos ? `<div class="gm">${gmapsLinks(pos, onSite)}</div>` : ""}
   </div>
 </li>`;
       })
@@ -106,6 +167,7 @@ function selectFig(fig: string) {
 }
 
 list.addEventListener("click", (e) => {
+  if ((e.target as HTMLElement).closest("a")) return; // Google Maps links
   const li = (e.target as HTMLElement).closest("li");
   const fig = li?.querySelector<HTMLButtonElement>(".fig");
   if (fig && !fig.disabled && fig.dataset.fig) selectFig(fig.dataset.fig);
@@ -139,5 +201,6 @@ function loadHash() {
   map.fitMatches();
 }
 addEventListener("hashchange", loadHash);
-render();
+// Read the hash before the first render, which rewrites it.
 loadHash();
+render();

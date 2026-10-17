@@ -8,6 +8,10 @@ culturală, științifică și militară"), with an interactive Leaflet map of t
 - Vite + TypeScript, no framework. `npm run dev`, `npm run build` (runs `tsc --noEmit` first).
 - `index.html` – page shell. `src/main.ts` – search + results list. `src/map.ts` – Leaflet map
   (`CRS.Simple` over `src/assets/plan.jpg`; one circle marker per figura).
+- `src/geo.ts` – georeferencing: a homography plan pixels ↔ GPS (fitted against the north-up colour
+  board's scale bar, anchored on the Google pin for the gate, the Wikipedia centre point = Capela Sf. Ioan
+  and Eminescu's grave; ~±25 m), plus Google Maps URL builders (`directionsUrl`, `mapsUrl`). No API key:
+  plain `google.com/maps/dir|search/?api=1` links, which open the Google Maps app on phones.
 - `src/data/graves.ts` – `RAW` string, one line per grave: `figura|name|years|role`; `NOTES`.
 - `src/data/plots.ts` – figura → `[x, y]` pixel position of its label on `plan.jpg` (1910×870,
   origin top-left). P.M. entries all point at the Parcul Memorial area.
@@ -29,6 +33,10 @@ culturală, științifică și militară"), with an interactive Leaflet map of t
 - A bare number searches by figura (e.g. `96`); an exact figura label (`8 bis`, `1 B.M.`)
   matches only that figura (this is what tapping a marker puts in the box).
 - Query is mirrored to the URL hash (`#q=...`).
+- Every plotted grave (list row + marker popup) links to Google Maps: "Directions" (walking mode once the
+  user is located on site) and "Google Maps" (a pin). Header links to directions to the cemetery gate.
+- ◎ control = locate me: `watchPosition` → `gpsToPlan` → blue dot + accuracy circle on the plan, and a dashed
+  line to the selected plot labelled "~120 m NE". Off-site fixes just show the distance to Bellu.
 - Ion Caramitru is NOT on the board; added manually as "94–96 (near)" with a note
   (buried Sept 2021 on Aleea Actorilor, reported near Laura Stoica, Fig. 94).
 - B.M. = Bellu Militar (right-hand strip of the plan), P.M. = Parcul Memorial al Academiei Române.
@@ -42,4 +50,5 @@ culturală, științifică și militară"), with an interactive Leaflet map of t
   best guess (label next to 10 bis).
 - Could merge in the colour board's entries (photos/board-ortodox-numbered.jpg) and
   graves not on the boards.
-- "Locate me" on the plan would need georeferencing the plan image against GPS coordinates.
+- Georeferencing is approximate (the old plan is schematic); refine `H` in `src/geo.ts` with real GPS
+  readings taken at a few plot corners if positions turn out off.

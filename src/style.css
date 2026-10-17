@@ -69,6 +69,10 @@ ul#list { list-style: none; margin: 0; padding: 0; }
 .meta { color: var(--muted); font-size: .88rem; font-weight: 400; }
 .note { font-size: .85rem; color: var(--accent); margin-top: 2px; font-weight: 400; }
 mark { background: var(--fig-bg); color: inherit; border-radius: 2px; }
+.gm { font-size: .82rem; font-weight: 400; margin: 3px 0 0; }
+.gm a, .sub a, .locstatus a { color: var(--accent); }
+.locstatus { font-size: .85rem; margin: 6px 0 0; }
+.locstatus:empty { display: none; }
 .legend { color: var(--muted); font-size: .85rem; margin-top: 14px; }
 
 /* Map layers */
@@ -87,6 +91,13 @@ ul.pop { list-style: none; margin: 4px 0 0; padding: 0; }
 ul.pop li { padding: 1px 0; }
 ul.pop span { color: var(--muted); font-size: .82rem; }
 .leaflet-bar a { background: var(--surface); color: var(--fg); border-color: var(--line); }
+.locate a { display: flex; align-items: center; justify-content: center; }
+.locate.on a { color: #1a73e8; }
+path.user { fill: #1a73e8; fill-opacity: 1; stroke: #fff; stroke-width: 2.5; }
+path.user-acc { fill: #1a73e8; fill-opacity: .12; stroke: #1a73e8; stroke-opacity: .4; stroke-width: 1; }
+path.guide { stroke: #1a73e8; stroke-width: 3; stroke-dasharray: 6 7; fill: none; }
+.guide-tip { font-family: var(--body); font-weight: 600; background: var(--surface); color: var(--fg); border-color: var(--line); }
+.guide-tip::before { display: none; }
 
 @media (min-width: 900px) {
   .app {
