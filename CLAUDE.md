@@ -18,6 +18,9 @@ culturală, științifică și militară"), with an interactive Leaflet map of t
   - `board-ortodox-numbered.jpg` – the newer colour board (2026) with a numbered selection
     of ~100 graves and a north-up map; uses its own marker numbers 1–100.
   - `board-detail-*.jpg` – closer shots of the plan/list for re-checking text.
+- PWA via `vite-plugin-pwa` (config in `vite.config.ts`): manifest, `autoUpdate` service worker that
+  precaches the app shell, JS/CSS and `plan.jpg`; Google Fonts cached at runtime. Icons in `public/`
+  (generated with PIL: brown rounded square + cross; `icon-maskable-512.png` has a safe-zone margin).
 - `.github/workflows/deploy.yml` – builds on PRs, deploys `main` to GitHub Pages
   (Pages source must be set to "GitHub Actions"). Vite `base: "./"` so any repo name works.
 
@@ -39,4 +42,4 @@ culturală, științifică și militară"), with an interactive Leaflet map of t
   best guess (label next to 10 bis).
 - Could merge in the colour board's entries (photos/board-ortodox-numbered.jpg) and
   graves not on the boards.
-- PWA (manifest, service worker) for offline use in the cemetery.
+- "Locate me" on the plan would need georeferencing the plan image against GPS coordinates.

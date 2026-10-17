@@ -130,7 +130,14 @@ chips.addEventListener("click", (e) => {
   map.fitMatches();
 });
 
-const fromHash = new URLSearchParams(location.hash.slice(1)).get("q");
-if (fromHash) q.value = fromHash;
+function loadHash() {
+  const fromHash = new URLSearchParams(location.hash.slice(1)).get("q") ?? "";
+  if (fromHash === q.value.trim()) return;
+  q.value = fromHash;
+  selectedFig = null;
+  render();
+  map.fitMatches();
+}
+addEventListener("hashchange", loadHash);
 render();
-if (fromHash) map.fitMatches();
+loadHash();
