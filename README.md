@@ -7,6 +7,10 @@ map of the cemetery plan. Data is transcribed from the entrance information boar
 - Diacritic-insensitive, multi-term search across figura, name, role and years
   (`eminescu`, `actor 96`, `caragiu`). A bare number searches by figura (`96`).
 - Tap a result to fly to its plot on the plan; tap a plot marker to list everyone buried there.
+- Google Maps integration: every grave has **Directions** (turn-by-turn to the plot) and **Google Maps**
+  (pin) links, plus directions to the cemetery gate. Plot positions are estimated from the plan (±25 m).
+- **Locate me** (◎ on the map) shows where you are on the plan and the distance/direction to the selected
+  grave, so you can walk there inside the cemetery.
 - Searches are kept in the URL (`#q=Eminescu`) so results can be shared.
 - Installable PWA that works offline (handy in the cemetery, where signal is poor): add it to
   the home screen from the browser menu after the first visit.

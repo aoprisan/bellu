@@ -18,20 +18,21 @@
   <div class="app">
     <header class="top">
       <h1>Bellu Grave Finder</h1>
-      <p class="sub">Cimitirul Bellu Ortodox · transcribed from the entrance board · search ignores diacritics</p>
+      <p class="sub">Cimitirul Bellu Ortodox · transcribed from the entrance board · search ignores diacritics · <a id="getthere" href="https://www.google.com/maps/dir/?api=1&amp;destination=Cimitirul+Bellu" target="_blank" rel="noopener">Directions to Bellu</a></p>
       <input id="q" type="search" placeholder="Name, figura or role (e.g. Eminescu, 96, actor)" autocomplete="off" aria-label="Search graves">
       <div class="chips" id="chips"></div>
     </header>
 
     <section class="mapwrap" aria-label="Cemetery plan">
       <div id="map"></div>
-      <p class="maphint">Tap a result to locate its plot · tap a marker to list who is buried there · Calea Șerban Vodă entrances are at the bottom.</p>
+      <p class="locstatus" id="locstatus" aria-live="polite"></p>
+      <p class="maphint">Tap a result to locate its plot · tap a marker to list who is buried there · ◎ shows where you are · Calea Șerban Vodă entrances are at the bottom (the plan is not north-up: north is to the left).</p>
     </section>
 
     <section class="results" aria-label="Results">
       <p class="count" id="count" aria-live="polite"></p>
       <ul id="list"></ul>
-      <p class="legend">B.M. = Bellu Militar · P.M. = Parcul Memorial al Academiei Române (individual P.M. numbers are not drawn on the plan). The board lists only selected graves; anyone missing is not necessarily elsewhere.</p>
+      <p class="legend">B.M. = Bellu Militar · P.M. = Parcul Memorial al Academiei Române (individual P.M. numbers are not drawn on the plan). The board lists only selected graves; anyone missing is not necessarily elsewhere. Google Maps positions are estimated from the plan and good to roughly ±25 m: enough to find the plot, then look for the name.</p>
     </section>
   </div>
   <script type="module" src="/src/main.ts"></script>
