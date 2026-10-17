@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bellu Grave Finder</title>
+  <meta name="description" content="Search notable graves in Cimitirul Bellu (Bucharest) and see their plot on an interactive map of the cemetery plan.">
+  <meta name="theme-color" content="#f3f2ee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#171815" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%235a4a2f'/%3E%3Cpath d='M14 6h4v6h6v4h-6v10h-4V16H8v-4h6z' fill='%23f3f2ee'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <h1>Bellu Grave Finder</h1>
+      <p class="sub">Cimitirul Bellu Ortodox · transcribed from the entrance board · search ignores diacritics</p>
+      <input id="q" type="search" placeholder="Name, figura or role (e.g. Eminescu, 96, actor)" autocomplete="off" aria-label="Search graves">
+      <div class="chips" id="chips"></div>
+    </header>
+
+    <section class="mapwrap" aria-label="Cemetery plan">
+      <div id="map"></div>
+      <p class="maphint">Tap a result to locate its plot · tap a marker to list who is buried there · Calea Șerban Vodă entrances are at the bottom.</p>
+    </section>
+
+    <section class="results" aria-label="Results">
+      <p class="count" id="count" aria-live="polite"></p>
+      <ul id="list"></ul>
+      <p class="legend">B.M. = Bellu Militar · P.M. = Parcul Memorial al Academiei Române (individual P.M. numbers are not drawn on the plan). The board lists only selected graves; anyone missing is not necessarily elsewhere.</p>
+    </section>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
